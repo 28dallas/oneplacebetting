@@ -1,0 +1,6 @@
+{
+  "/not-found": "app/not-found.js",
+  "/page": "app/page.js",
+  "/live/page": "app/live/page.js",
+  "/sports/page": "app/sports/page.js"
+}
