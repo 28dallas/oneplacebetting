@@ -68,21 +68,21 @@ export default function LivePage() {
   const [selectedMatch, setSelectedMatch] = useState(liveMatches[0])
   const [odds, setOdds] = useState(liveMatches)
 
-  // Simulate live odds updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setOdds(prevOdds => 
-        prevOdds.map(match => ({
-          ...match,
-          homeOdds: +(match.homeOdds + (Math.random() - 0.5) * 0.1).toFixed(2),
-          drawOdds: match.drawOdds ? +(match.drawOdds + (Math.random() - 0.5) * 0.2).toFixed(2) : null,
-          awayOdds: +(match.awayOdds + (Math.random() - 0.5) * 0.1).toFixed(2)
-        }))
-      )
-    }, 2000)
+  // Simulate live odds updates - disabled for now
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setOdds(prevOdds => 
+  //       prevOdds.map(match => ({
+  //         ...match,
+  //         homeOdds: +(match.homeOdds + (Math.random() - 0.5) * 0.1).toFixed(2),
+  //         drawOdds: match.drawOdds ? +(match.drawOdds + (Math.random() - 0.5) * 0.2).toFixed(2) : match.drawOdds,
+  //         awayOdds: +(match.awayOdds + (Math.random() - 0.5) * 0.1).toFixed(2)
+  //       }))
+  //     )
+  //   }, 2000)
 
-    return () => clearInterval(interval)
-  }, [])
+  //   return () => clearInterval(interval)
+  // }, [])
 
   return (
     <div className="min-h-screen bg-dark-950 py-8">

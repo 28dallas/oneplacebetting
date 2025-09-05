@@ -1,16 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Wallet, TrendingUp, TrendingDown, Clock, CheckCircle, XCircle, Plus, Minus } from 'lucide-react'
+import { authService, type User } from '@/lib/auth'
 
-const mockUser = {
-  name: 'John Doe',
-  balance: 1250.75,
-  totalWinnings: 3420.50,
-  totalLosses: 2169.75,
-  winRate: 68
-}
+
 
 const activeBets = [
   {
@@ -74,7 +70,30 @@ const betHistory = [
 ]
 
 export default function Dashboard() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser()
+    if (!currentUser) {
+      router.push('/login')
+      return
+    }
+    setUser(currentUser)
+    setLoading(false)
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!user) return null
 
   return (
     <div className="min-h-screen bg-dark-950 py-8">
@@ -86,7 +105,7 @@ export default function Dashboard() {
           className="mb-8"
         >
           <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
-            Welcome back, {mockUser.name}
+            Welcome back, {user.fullName}
           </h1>
           <p className="text-gray-400">Manage your bets and track your performance</p>
         </motion.div>
@@ -102,7 +121,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Current Balance</p>
-                <p className="text-2xl font-bold text-white">${mockUser.balance}</p>
+                <p className="text-2xl font-bold text-white">{user.currency} {user.balance.toFixed(2)}</p>
               </div>
               <Wallet className="w-8 h-8 text-primary-500" />
             </div>
@@ -112,7 +131,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Winnings</p>
-                <p className="text-2xl font-bold text-white">${mockUser.totalWinnings}</p>
+                <p className="text-2xl font-bold text-white">{user.currency} 0.00</p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-500" />
             </div>
@@ -122,7 +141,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Losses</p>
-                <p className="text-2xl font-bold text-white">${mockUser.totalLosses}</p>
+                <p className="text-2xl font-bold text-white">{user.currency} 0.00</p>
               </div>
               <TrendingDown className="w-8 h-8 text-red-500" />
             </div>
@@ -132,10 +151,10 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Win Rate</p>
-                <p className="text-2xl font-bold text-white">{mockUser.winRate}%</p>
+                <p className="text-2xl font-bold text-white">0%</p>
               </div>
               <div className="w-8 h-8 bg-accent-500 rounded-full flex items-center justify-center">
-                <span className="text-dark-900 font-bold text-sm">{mockUser.winRate}</span>
+                <span className="text-dark-900 font-bold text-sm">0</span>
               </div>
             </div>
           </div>

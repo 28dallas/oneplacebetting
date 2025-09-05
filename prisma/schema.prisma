@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  bets         Bet[]
+  transactions Transaction[]
+  
+  @@map("users")
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String   // deposit, withdrawal, bet, payout
+  amount        Float
+  provider      String?  // mpesa, airtel, stripe
+  phoneNumber   String?
+  transactionId String?
+  status        String   @default("pending") // pending, completed, failed
+  createdAt     DateTime @default(now())
+  
+  user          User     @relation(fields: [userId], references: [id])
+  
+  @@map("transactions")
+}
+
+model Sport {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  icon        String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  events      Event[]
+  
+  @@map("sports")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  homeTeam    String
+  awayTeam    String
+  startTime   DateTime
+  status      String   @default("upcoming") // upcoming, live, finished
+  sportId     String
+  isLive      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  sport       Sport    @relation(fields: [sportId], references: [id])
+  odds        Odds[]
+  bets        Bet[]
+  
+  @@map("events")
+}
+
+model Odds {
+  id        String   @id @default(cuid())
+  eventId   String
+  type      String   // home, away, draw
+  value     Float
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  event     Event    @relation(fields: [eventId], references: [id])
+  bets      Bet[]
+  
+  @@map("odds")
+}
+
+model Bet {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  oddsId    String
+  amount    Float
+  status    String   @default("pending") // pending, won, lost
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+  odds      Odds     @relation(fields: [oddsId], references: [id])
+  
+  @@map("bets")
+}

@@ -3,11 +3,16 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react'
+import { authService } from '@/lib/auth'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -17,10 +22,34 @@ export default function LoginPage() {
     phone: ''
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
+    setError('')
+    setLoading(true)
+
+    try {
+      if (isLogin) {
+        await authService.login(formData.email, formData.password)
+        router.push('/dashboard')
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          setError('Passwords do not match')
+          return
+        }
+        await authService.signup({
+          email: formData.email,
+          fullName: `${formData.firstName} ${formData.lastName}`,
+          phone: formData.phone,
+          country: 'United Kingdom',
+          currency: 'EUR'
+        })
+        router.push('/dashboard')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +109,13 @@ export default function LoginPage() {
             Sign Up
           </button>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
 
         {/* Form */}
         <motion.form
@@ -219,9 +255,10 @@ export default function LoginPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full btn-primary"
+            disabled={loading}
+            className="w-full btn-primary disabled:opacity-50"
           >
-            {isLogin ? 'Sign In' : 'Create Account'}
+            {loading ? (isLogin ? 'Signing In...' : 'Creating Account...') : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
 
           {/* Social Login */}
