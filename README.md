@@ -178,4 +178,4 @@ This project is for educational and demonstration purposes. Please ensure compli
 
 ---
 
-Built with ❤️ using Next.js, Tailwind CSS, and Framer Motion
+Built with ❤️ using Next.js, Tailwind CSS, and Framer Motion# betskyvet
