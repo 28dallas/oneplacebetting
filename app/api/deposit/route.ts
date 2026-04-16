@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,6 +7,11 @@ export async function POST(request: NextRequest) {
     if (!amount || amount < 1) {
       return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
     }
+
+    const { default: Stripe } = await import('stripe')
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2025-07-30.basil',
+    })
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents

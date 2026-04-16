@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
 import { db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
@@ -7,6 +6,11 @@ export async function POST(request: NextRequest) {
   const signature = request.headers.get('stripe-signature')!
 
   try {
+    const { default: Stripe } = await import('stripe')
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2025-07-30.basil',
+    })
+
     const event = stripe.webhooks.constructEvent(
       body,
       signature,
