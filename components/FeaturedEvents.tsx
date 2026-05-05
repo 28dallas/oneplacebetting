@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion'
 import { Clock, Users } from 'lucide-react'
+import { useState } from 'react'
 import { useBetSlip } from '@/lib/betSlip'
 import { useOdds } from '@/lib/oddsContext'
+import { ButtonLoading } from '@/components/Loading'
 
 const featuredEvents = [
   {
@@ -50,16 +52,28 @@ const featuredEvents = [
 export default function FeaturedEvents() {
   const { addBet } = useBetSlip()
   const { convert } = useOdds()
+  const [loadingBets, setLoadingBets] = useState<Set<string>>(new Set())
 
-  const handleAddBet = (event: typeof featuredEvents[0], selection: string, odds: number) => {
-    addBet({
-      id: `fe-${event.id}-${selection}`,
-      match: `${event.homeTeam} vs ${event.awayTeam}`,
-      selection,
-      odds,
-      sport: event.sport,
-      eventId: String(event.id)
-    })
+  const handleAddBet = async (event: typeof featuredEvents[0], selection: string, odds: number) => {
+    const betId = `fe-${event.id}-${selection}`
+    setLoadingBets(prev => new Set(prev).add(betId))
+
+    try {
+      addBet({
+        id: betId,
+        match: `${event.homeTeam} vs ${event.awayTeam}`,
+        selection,
+        odds,
+        sport: event.sport,
+        eventId: String(event.id)
+      })
+    } finally {
+      setLoadingBets(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(betId)
+        return newSet
+      })
+    }
   }
 
   return (
@@ -117,28 +131,49 @@ export default function FeaturedEvents() {
             <div className={`grid ${event.drawOdds ? 'grid-cols-3' : 'grid-cols-2'} gap-2`}>
               <button
                 onClick={() => handleAddBet(event, event.homeTeam, event.homeOdds)}
-                className="odds-button text-center"
+                disabled={loadingBets.has(`fe-${event.id}-${event.homeTeam}`)}
+                className="odds-button text-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="text-xs text-gray-400 mb-1">1</div>
-                <div className="font-semibold">{convert(event.homeOdds)}</div>
+                <div className="font-semibold">
+                  {loadingBets.has(`fe-${event.id}-${event.homeTeam}`) ? (
+                    <ButtonLoading text="" />
+                  ) : (
+                    convert(event.homeOdds)
+                  )}
+                </div>
               </button>
 
               {event.drawOdds && (
                 <button
                   onClick={() => handleAddBet(event, 'Draw', event.drawOdds!)}
-                  className="odds-button text-center"
+                  disabled={loadingBets.has(`fe-${event.id}-Draw`)}
+                  className="odds-button text-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="text-xs text-gray-400 mb-1">X</div>
-                  <div className="font-semibold">{convert(event.drawOdds)}</div>
+                  <div className="font-semibold">
+                    {loadingBets.has(`fe-${event.id}-Draw`) ? (
+                      <ButtonLoading text="" />
+                    ) : (
+                      convert(event.drawOdds)
+                    )}
+                  </div>
                 </button>
               )}
 
               <button
                 onClick={() => handleAddBet(event, event.awayTeam, event.awayOdds)}
-                className="odds-button text-center"
+                disabled={loadingBets.has(`fe-${event.id}-${event.awayTeam}`)}
+                className="odds-button text-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="text-xs text-gray-400 mb-1">2</div>
-                <div className="font-semibold">{convert(event.awayOdds)}</div>
+                <div className="font-semibold">
+                  {loadingBets.has(`fe-${event.id}-${event.awayTeam}`) ? (
+                    <ButtonLoading text="" />
+                  ) : (
+                    convert(event.awayOdds)
+                  )}
+                </div>
               </button>
             </div>
 

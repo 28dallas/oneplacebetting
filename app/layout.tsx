@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import BetSlip from '@/components/BetSlip'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { OddsProvider } from '@/lib/oddsContext'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -24,7 +25,9 @@ export default function RootLayout({
           <div className="min-h-screen flex flex-col">
             <Navbar />
             <main className="flex-1">
-              {children}
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
             </main>
             <Footer />
             <BetSlip />

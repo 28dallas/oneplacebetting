@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Hero from '@/components/Hero'
 import FeaturedEvents from '@/components/FeaturedEvents'
 import PopularSports from '@/components/PopularSports'

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { Users, DollarSign, TrendingUp, Activity, Settings, Eye } from 'lucide-react'
+import { Users, DollarSign, TrendingUp, Activity } from 'lucide-react'
 import { useBetting } from '@/lib/betting'
 
 export default function AdminPage() {

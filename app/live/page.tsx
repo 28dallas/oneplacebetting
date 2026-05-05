@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { BarChart3, Users, RefreshCw, Wifi, WifiOff } from 'lucide-react'
+import { RefreshCw, Wifi, WifiOff } from 'lucide-react'
 import { useOdds } from '@/lib/oddsContext'
 import { useBetSlip } from '@/lib/betSlip'
 

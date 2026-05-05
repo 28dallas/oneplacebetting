@@ -1,9 +1,9 @@
-const AfricasTalking = require('africastalking')
+import AfricasTalking from 'africastalking'
 
 const africastalking = AfricasTalking({
   apiKey: process.env.AFRICASTALKING_API_KEY!,
   username: process.env.AFRICASTALKING_USERNAME!,
-})
+}) as any
 
 export const mobileMoneyService = {
   // M-Pesa deposit
@@ -17,7 +17,7 @@ export const mobileMoneyService = {
         metadata: { userId }
       })
       return response
-    } catch (error) {
+    } catch (_error) {
       throw new Error('M-Pesa payment failed')
     }
   },
@@ -34,7 +34,7 @@ export const mobileMoneyService = {
         metadata: { userId }
       })
       return response
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Airtel Money payment failed')
     }
   },
@@ -52,7 +52,7 @@ export const mobileMoneyService = {
         }]
       })
       return response
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Payout failed')
     }
   }

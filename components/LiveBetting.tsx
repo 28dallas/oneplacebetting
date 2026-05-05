@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { Play, Pause, TrendingUp, TrendingDown } from 'lucide-react'
+import { Play, TrendingUp, TrendingDown } from 'lucide-react'
 
 const liveMatches = [
   {

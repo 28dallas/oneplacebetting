@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { X, Trash2, Calculator } from 'lucide-react'
 import { useBetSlip } from '@/lib/betSlip'
 import { useBetting } from '@/lib/betting'

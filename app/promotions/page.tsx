@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ArrowRight, BadgePercent, Clock3, Coins, Flame, Gift, Search, ShieldCheck, Sparkles, Ticket } from 'lucide-react'
+import { ArrowRight, Clock3, Coins, Flame, Gift, Search, ShieldCheck, Sparkles, Ticket } from 'lucide-react'
 import { authService, type User } from '@/lib/auth'
 
 type PromoCategory = 'All' | 'Welcome' | 'Cashback' | 'Odds Boost' | 'Reload' | 'VIP'
